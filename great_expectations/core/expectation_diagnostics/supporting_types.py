@@ -42,7 +42,10 @@ class AugmentedLibraryMetadata(SerializableDictDot):
     maturity: Maturity
     tags: List[str]
     contributors: List[str]
+    requirements: List[str]
     library_metadata_passed_checks: bool
+    has_full_test_suite: Optional[bool] = False
+    manually_reviewed_code: Optional[bool] = False
     package: Optional[Package] = None
 
     legacy_maturity_level_substitutions = {
