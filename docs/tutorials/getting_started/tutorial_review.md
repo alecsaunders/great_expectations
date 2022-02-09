@@ -112,7 +112,7 @@ Let's review each of these steps and take a look at the important concepts and f
 
 - **Checkpoint**: An object that uses a Validator to run an Expectation Suite against a batch of data.  Running a Checkpoint produces Validation Results for the data it was run on.
 - **Validation Results**: A report generated from an Expectation Suite being run against a batch of data.  The Validation Result itself is in JSON and is rendered as Data Docs.
-- **Data Docs**: Human readable documentation that describes Expectations for data and its Validation Results.  Data docs van be generated both from Expectation Suites (describing our Expectations for the data) and also from Validation Results (describing if the data meets those Expectations).
+- **Data Docs**: Human readable documentation that describes Expectations for data and its Validation Results.  Data docs can be generated both from Expectation Suites (describing our Expectations for the data) and also from Validation Results (describing if the data meets those Expectations).
 
 ### Going forward
 
