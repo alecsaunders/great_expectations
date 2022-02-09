@@ -494,6 +494,53 @@ def test_expectation__get_renderers():
     }
 
 
+def test_expectation__get_execution_engine_dict(
+    test_cases_for_sql_data_connector_sqlite_execution_engine,
+):
+    expectation_name = "expect_column_values_to_equal_three___second_iteration"
+    my_expectation = _registered_expectations[expectation_name]()
+
+    examples = my_expectation._get_examples()
+    example_data, example_test = my_expectation._choose_example(examples)
+
+    my_batch = Batch(data=pd.DataFrame(example_data))
+
+    my_expectation_config = ExpectationConfiguration(
+        **{"expectation_type": expectation_name, "kwargs": example_test}
+    )
+
+    my_validation_results = my_expectation._instantiate_example_validation_results(
+        test_batch=my_batch,
+        expectation_config=my_expectation_config,
+    )
+    upstream_metrics = my_expectation._get_upstream_metrics(
+        expectation_config=my_expectation_config
+    )
+
+    execution_engines = my_expectation._get_execution_engine_dict(
+        upstream_metrics=upstream_metrics,
+    )
+    assert isinstance(renderer_diagnostics, list)
+    assert len(renderer_diagnostics) == 10
+    for element in renderer_diagnostics:
+        print(json.dumps(element.to_dict(), indent=2))
+        assert isinstance(element, ExpectationRendererDiagnostics)
+
+    assert len(renderer_diagnostics) == 10
+    assert set([rd.name for rd in renderer_diagnostics]) == {
+        "renderer.diagnostic.observed_value",
+        "renderer.prescriptive",
+        "renderer.diagnostic.meta_properties",
+        "renderer.diagnostic.status_icon",
+        "renderer.diagnostic.unexpected_table",
+        "atomic.diagnostic.observed_value",
+        "atomic.prescriptive.summary",
+        "renderer.answer",
+        "renderer.question",
+        "renderer.diagnostic.unexpected_statement",
+    }
+
+
 def test_expectation_is_abstract():
     # is_abstract determines whether the expectation should be added to the registry (i.e. is fully implemented)
     assert ColumnMapExpectation.is_abstract()

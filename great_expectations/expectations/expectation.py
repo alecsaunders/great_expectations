@@ -1253,29 +1253,30 @@ class Expectation(metaclass=MetaExpectation):
         execution_engine_diagnostics: ExpectationExecutionEngineDiagnostics,
     ):
         """This is a placeholder method to adapt the typed objects used to build ExpectationDiagnostics with the untyped dictionaries used in generate_expectation_tests"""
-        retrofitted_examples = []
-        for test_data_cases in test_data_cases:
-            retro_test_data_case = test_data_cases.to_dict()
+        # retrofitted_examples = []
+        # for test_data_cases in test_data_cases:
+        #     retro_test_data_case = test_data_cases.to_dict()
 
-            retro_test_cases = []
-            for test_case in test_data_cases.tests:
-                retro_test_case = test_case.to_dict()
-                retro_test_case["in"] = retro_test_case["input"]
-                retro_test_case["out"] = retro_test_case["output"]
-                del retro_test_case["input"]
-                del retro_test_case["output"]
+        #     retro_test_cases = []
+        #     for test_case in test_data_cases.tests:
+        #         retro_test_case = test_case.to_dict()
+        #         retro_test_case["in"] = retro_test_case["input"]
+        #         retro_test_case["out"] = retro_test_case["output"]
+        #         del retro_test_case["input"]
+        #         del retro_test_case["output"]
 
-                retro_test_cases.append(retro_test_case)
+        #         retro_test_cases.append(retro_test_case)
 
-            retro_test_data_case["tests"] = retro_test_cases
+        #     retro_test_data_case["tests"] = retro_test_cases
 
-            retrofitted_examples.append(retro_test_data_case)
+        #     retrofitted_examples.append(retro_test_data_case)
 
-        return generate_expectation_tests(
+        parameterized_tests = generate_expectation_tests(
             expectation_type=snake_name,
-            examples_config=retrofitted_examples,
-            expectation_execution_engines_dict=execution_engine_diagnostics.to_dict(),
+            test_data_cases=test_data_cases,
+            execution_engine_diagnostics=execution_engine_diagnostics,
         )
+        return parameterized_tests
 
     def _get_rendered_result_as_string(self, rendered_result) -> str:
         """Convenience method to get rendered results as strings."""
@@ -1342,6 +1343,7 @@ class Expectation(metaclass=MetaExpectation):
                         rendered_result = renderer(
                             configuration=executed_test_case[
                                 "expectation_configuration"
+                            ].to_dict(),
                             ],
                             result=executed_test_case["validation_result"],
                         )
@@ -1464,12 +1466,13 @@ class Expectation(metaclass=MetaExpectation):
 
             keys = self.library_metadata.keys()
             has_all_required_keys = all(
-                [key in keys for key in {"tags", "contributors"}]
+                [key in keys for key in {"maturity", "tags", "contributors"}]
             )
             has_no_forbidden_keys = all(
                 [
                     key
                     in {
+                        "maturity",
                         "tags",
                         "contributors",
                         "requirements",
